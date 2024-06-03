@@ -1,0 +1,52 @@
+-----------------------------------------------------------------------------------------------------------
+-ES-1 estrai tutti i clienti con nome mario
+
+SELECT * FROM clienti
+WHERE Nome = 'mario';
+
+-----------------------------------------------------------------------------------------------------------
+-ES-2 Estrarre il nome e il cognome dei clienti nati nel 1982
+
+SELECT nome, cognome FROM clienti WHERE EXTRACT(YEAR FROM "anno_di_nascita")  = '1982';
+
+-----------------------------------------------------------------------------------------------------------
+-ES-3 Estrarre il numero delle fatture con iva al 20%
+
+SELECT COUNT(*) AS id_fatture FROM fatture WHERE Iva = 20
+
+-----------------------------------------------------------------------------------------------------------
+-ES-4  Estrarre i prodotti attivati nel 2017 e che sono in produzione oppure in commercio (Per estrarre l'anno da una data si può
+usare EXTRACT(YEAR FROM data)
+
+SELECT * FROM prodotti WHERE EXTRACT(YEAR FROM "data_attivazione") = 2017 AND ("in_produzione" = TRUE OR "in_commercio" = TRUE);
+
+-----------------------------------------------------------------------------------------------------------
+-ES-5 Estrarre le fatture con importo inferiore a 1000 e i dati dei clienti ad esse collegate
+
+SELECT fatture.id_fattura, fatture.tipologia, fatture.importo, fatture.iva, fatture.data_fattura,
+clienti.id_cliente, clienti.nome, clienti.cognome, clienti."anno_di_nascita", clienti.regione_residenza FROM fatture JOIN clienti 
+	ON fatture.id_cliente = clienti.id_cliente WHERE fatture.importo < 1000;
+
+-----------------------------------------------------------------------------------------------------------
+-ES-6 Riportare l'elenco delle fatture (numero, importo, iva e data) con in aggiunta il nome del fornitore
+
+SELECT fatture.id_fattura, fatture.importo, fatture.iva, fatture.data_fattura, fornitori.denominazione AS nome_fornitore
+FROM fatture JOIN fornitori ON fatture.numero_fornitore = fornitori.id_fornitore;
+
+-----------------------------------------------------------------------------------------------------------
+-ES-7 Considerando soltanto le fatture con iva al 20 per cento, estrarre il numero di fatture per ogni anno (Per estrarre l'anno da
+una data si può usare EXTRACT(YEAR FROM data)
+
+SELECT EXTRACT(YEAR FROM "data_fattura") AS anno, COUNT(*) AS numero_fatture FROM fatture
+WHERE iva = 20 GROUP BY EXTRACT(YEAR FROM "data_fattura") ORDER BY anno;
+
+-----------------------------------------------------------------------------------------------------------
+-ES-8 Riportare il numero di fatture e la somma dei relativi importi divisi per anno di fatturazione
+
+SELECT EXTRACT(YEAR FROM "data_fattura") AS anno, COUNT(*) AS numero_fatture, SUM(importo) AS SommaImporti
+FROM fatture GROUP BY EXTRACT(YEAR FROM "data_fattura") ORDER BY anno;
+
+-----------------------------------------------------------------------------------------------------------
+-ES-9 [EXTRA] Estrarre gli anni in cui sono state registrate più di 2 fatture con tipologia 'A'
+
+
